@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  mount_devise_token_auth_for 'Applicant', at: 'auth'
+  mount_devise_token_auth_for 'Applicant', at: 'applicant_auth'
 
-  mount_devise_token_auth_for 'HeadHunter', at: 'auth'
+  mount_devise_token_auth_for 'HeadHunter', at: 'head_hunter_auth'
   as :head_hunter do
     # Define routes for HeadHunter within this block.
   end
