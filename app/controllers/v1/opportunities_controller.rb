@@ -1,15 +1,14 @@
 class V1::OpportunitiesController < ApplicationController
   before_action :authenticate_head_hunter!, only: [:create]
   def create
-    if Opportunitie.new(opportunitie_params).save!
-      render :json, status: :created
-    end
+    @opportunity = Opportunity.create!(opportunity_params)
+    render json: @opportunity, status: :created
   end
 
   private
 
-  def opportunitie_params
-    params.require(:opportunitie)
+  def opportunity_params
+    params.require(:opportunity)
           .permit(:title, :hirer, :description,
                   :requirements, :location)
           .merge(head_hunter_id: current_head_hunter.id)

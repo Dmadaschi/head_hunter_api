@@ -37,24 +37,24 @@ describe 'opportunities' do
       headers = { accept: 'application/json' }.merge(head_hunter_token)
       head_hunter = HeadHunter.find_by(email: headers.fetch(:uid))
       params = {
-        opportunitie: {
+        opportunity: {
           title: 'titulo', hirer: 'Empresa',
           description: 'Opirtunidade blá blá blá',
           requirements: 'Ruby-on-rails, REST, React.js',
           location: 'Av Paulista', head_hunter: head_hunter
-         }
+        }
       }
 
       post v1_opportunities_path, params: params, headers: headers
-      opportunitie = Opportunitie.last
+      opportunity = Opportunity.last
 
       expect(response).to have_http_status(:created)
-      expect(opportunitie.title).to eq('titulo')
-      expect(opportunitie.hirer).to eq('Empresa')
-      expect(opportunitie.description).to eq('Opirtunidade blá blá blá')
-      expect(opportunitie.requirements).to eq('Ruby-on-rails, REST, React.js')
-      expect(opportunitie.location).to eq('Av Paulista')
-      expect(opportunitie.head_hunter).to eq(head_hunter)
+      expect(opportunity.title).to eq('titulo')
+      expect(opportunity.hirer).to eq('Empresa')
+      expect(opportunity.description).to eq('Opirtunidade blá blá blá')
+      expect(opportunity.requirements).to eq('Ruby-on-rails, REST, React.js')
+      expect(opportunity.location).to eq('Av Paulista')
+      expect(opportunity.head_hunter).to eq(head_hunter)
     end
   end
 end

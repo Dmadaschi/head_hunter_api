@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :opportunitie do
+  factory :opportunity do
     title { "MyString" }
     hirer { "MyString" }
     description { "MyString" }
