@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_03_233307) do
+ActiveRecord::Schema.define(version: 2021_03_09_032513) do
 
   create_table "applicants", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -62,4 +62,17 @@ ActiveRecord::Schema.define(version: 2021_03_03_233307) do
     t.index ["uid", "provider"], name: "index_head_hunters_on_uid_and_provider", unique: true
   end
 
+  create_table "opportunities", force: :cascade do |t|
+    t.string "title"
+    t.string "hirer"
+    t.string "description"
+    t.string "requirements"
+    t.string "location"
+    t.integer "head_hunter_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["head_hunter_id"], name: "index_opportunities_on_head_hunter_id"
+  end
+
+  add_foreign_key "opportunities", "head_hunters"
 end
