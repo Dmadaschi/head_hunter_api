@@ -35,6 +35,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # A library for setting up Ruby objects as test data.
   gem 'factory_bot_rails'
+  gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
   # RSpec for Rails 5+
   gem 'rspec-rails', '~> 4.0.2'
   # A runtime developer console and IRB alternative with powerful introspection capabilities.
