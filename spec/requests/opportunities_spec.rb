@@ -115,5 +115,94 @@ describe 'opportunities' do
       expect(response_json.fetch(:attributes).fetch(:requirements)).to eq('requirements')
       expect(response_json.fetch(:attributes).fetch(:location)).to eq('location')
     end
+
+    it 'with no opportunity' do
+      headers = { accept: 'application/json' }.merge(head_hunter_token)
+      Opportunity.destroy_all
+      get v1_opportunity_path(1), headers: headers
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  context 'view multiple opportunities' do
+    it 'with no authentication' do
+      headers = { accept: 'application/json' }
+      create_list(:opportunity, 5)
+      get v1_opportunities_path, headers: headers
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'with applicant authentication' do
+      headers = { accept: 'application/json' }.merge(applicant_token)
+      create(:opportunity)
+      get v1_opportunities_path, headers: headers
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'with head hunter authentication' do
+      headers = { accept: 'application/json' }.merge(head_hunter_token)
+      create(:opportunity)
+      get v1_opportunities_path, headers: headers
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'successfully' do
+      headers = { accept: 'application/json' }.merge(head_hunter_token)
+      create_list(:opportunity, 5)
+      params = {
+        page: {
+          number: 1,
+          size: 5
+        }
+      }
+      get v1_opportunities_path, params: params, headers: headers
+
+      response_json = JSON.parse(response.body, symbolize_names: true)
+                          .fetch(:data)
+      expect(response_json.count).to eq(5)
+      expect(response_json.first.fetch(:id)).to eq(Opportunity.first.id.to_s)
+      expect(response_json[1].fetch(:id)).to eq(Opportunity.all[1].id.to_s)
+      expect(response_json[2].fetch(:id)).to eq(Opportunity.all[2].id.to_s)
+      expect(response_json[3].fetch(:id)).to eq(Opportunity.all[3].id.to_s)
+      expect(response_json[4].fetch(:id)).to eq(Opportunity.all[4].id.to_s)
+    end
+
+    it 'just first page' do
+      headers = { accept: 'application/json' }.merge(head_hunter_token)
+      create_list(:opportunity, 5)
+      params = {
+        page: {
+          number: 1,
+          size: 3
+        }
+      }
+      get v1_opportunities_path, params: params, headers: headers
+
+      response_json = JSON.parse(response.body, symbolize_names: true)
+                          .fetch(:data)
+      expect(response_json.count).to eq(3)
+      expect(response_json.first.fetch(:id)).to eq(Opportunity.first.id.to_s)
+      expect(response_json[1].fetch(:id)).to eq(Opportunity.all[1].id.to_s)
+      expect(response_json[2].fetch(:id)).to eq(Opportunity.all[2].id.to_s)
+    end
+    it 'just second page' do
+      headers = { accept: 'application/json' }.merge(head_hunter_token)
+      Opportunity.destroy_all
+      create_list(:opportunity, 5)
+      params = {
+        page: {
+          number: 2,
+          size: 3
+        }
+      }
+      get v1_opportunities_path, params: params, headers: headers
+
+      response_json = JSON.parse(response.body, symbolize_names: true)
+                          .fetch(:data)
+      expect(response_json.count).to eq(2)
+      expect(response_json[0].fetch(:id)).to eq(Opportunity.all[3].id.to_s)
+      expect(response_json[1].fetch(:id)).to eq(Opportunity.all[4].id.to_s)
+    end
   end
 end
