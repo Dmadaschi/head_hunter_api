@@ -54,5 +54,31 @@ describe 'applicant' do
       expect(applicant.description)
         .to eq('Proatividade e trabalho em equipe')
     end
+    it 'with missing attributes' do
+      headers = { accept: 'application/json' }.merge(applicant_token)
+      params = {
+        data: {
+          attributes: {
+            name: nil,
+            nickname: nil,
+            birthdate: nil,
+            formation: 'Publicidade e propaganda',
+            experience: 'Gestor de midias 2019-Hoje',
+            description: nil
+          }
+        }
+      }
+
+      post v1_applicant_profiles_path, params: params,
+                                       headers: headers
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      expect(ApplicantProfile.all.count).to eq(0)
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response_body).to include("Name can't be blank") 
+      expect(response_body).to include("Nickname can't be blank") 
+      expect(response_body).to include("Birthdate can't be blank") 
+      expect(response_body).to include("Description can't be blank")
+    end
   end
 end
