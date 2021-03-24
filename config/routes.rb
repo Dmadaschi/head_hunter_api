@@ -5,6 +5,6 @@ Rails.application.routes.draw do
 
   namespace :v1 do
     resources :opportunities, only: %i[create show index]
-    resources :applicant_profiles, only: [:create]
+    resources :applicant_profiles, only: %i[create update]
   end
 end
