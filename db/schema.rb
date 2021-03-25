@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_14_150552) do
+ActiveRecord::Schema.define(version: 2021_03_25_000302) do
 
   create_table "applicant_profiles", force: :cascade do |t|
     t.string "name"
@@ -48,6 +48,15 @@ ActiveRecord::Schema.define(version: 2021_03_14_150552) do
     t.index ["email"], name: "index_applicants_on_email", unique: true
     t.index ["reset_password_token"], name: "index_applicants_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_applicants_on_uid_and_provider", unique: true
+  end
+
+  create_table "applicants_opportunities", force: :cascade do |t|
+    t.integer "applicant_id", null: false
+    t.integer "opportunity_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["applicant_id"], name: "index_applicants_opportunities_on_applicant_id"
+    t.index ["opportunity_id"], name: "index_applicants_opportunities_on_opportunity_id"
   end
 
   create_table "head_hunters", force: :cascade do |t|
@@ -88,5 +97,7 @@ ActiveRecord::Schema.define(version: 2021_03_14_150552) do
   end
 
   add_foreign_key "applicant_profiles", "applicants"
+  add_foreign_key "applicants_opportunities", "applicants"
+  add_foreign_key "applicants_opportunities", "opportunities"
   add_foreign_key "opportunities", "head_hunters"
 end

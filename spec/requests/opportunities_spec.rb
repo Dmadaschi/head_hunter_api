@@ -205,4 +205,77 @@ describe 'opportunities' do
       expect(response_json[1].fetch(:id)).to eq(Opportunity.all[4].id.to_s)
     end
   end
+
+  context 'applicant apply to opportunity' do
+    it 'successfully' do
+      headers = { accept: 'application/json' }.merge(applicant_token)
+      opportunity = create(:opportunity)
+      applicant = Applicant.last
+      create(:applicant_profile, applicant: applicant)
+      params = { data: {
+        attributes: { opportunity_id: opportunity.id }
+      } }
+
+      post apply_v1_opportunity_path(opportunity), params: params,
+                                                   headers: headers
+
+      opportunity.reload
+      expect(response).to have_http_status(:created)
+      expect(opportunity.applicants.count).to eq(1)
+    end
+
+    it 'with no applicant loged in' do
+      headers = { accept: 'application/json' }.merge(head_hunter_token)
+      opportunity = create(:opportunity)
+      params = { data: {
+        attributes: { opportunity_id: opportunity.id }
+      } }
+
+      post apply_v1_opportunity_path(opportunity), params: params,
+                                                   headers: headers
+
+      opportunity.reload
+      expect(response).to have_http_status(:unauthorized)
+      expect(opportunity.applicants.count).to eq(0)
+    end
+
+    it 'and save applicant' do
+      headers = { accept: 'application/json' }.merge(applicant_token)
+      opportunity = create(:opportunity)
+      applicant = Applicant.last
+      create(:applicant_profile, applicant: applicant)
+      params = { data: {
+        attributes: { opportunity_id: opportunity.id }
+      } }
+
+      post apply_v1_opportunity_path(opportunity), params: params,
+                                                   headers: headers
+      applicant.reload
+      opportunity.reload
+      expect(response).to have_http_status(:created)
+      expect(opportunity.applicants.last).to eq(applicant)
+      expect(applicant.opportunities.last).to eq(opportunity)
+    end
+
+    it 'and validates applicant profile presence' do
+      headers = { accept: 'application/json' }.merge(applicant_token)
+      opportunity = create(:opportunity)
+      applicant = Applicant.last
+      params = { data: {
+        attributes: { opportunity_id: opportunity.id }
+      } }
+
+      post apply_v1_opportunity_path(opportunity), params: params,
+                                                   headers: headers
+      applicant.reload
+      opportunity.reload
+      response_json = JSON.parse(response.body, symbolize_names: true)
+                          .fetch(:errors)
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(opportunity.applicants.count).to eq(0)
+      expect(applicant.opportunities.count).to eq(0)
+      expect(response_json)
+        .to include('applicant must have profile before apply to an oportunity')
+    end
+  end
 end

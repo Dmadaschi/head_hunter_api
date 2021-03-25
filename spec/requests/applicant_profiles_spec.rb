@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'applicant' do
+describe 'applicant profiles' do
   let(:applicant_token) do
     params = { email: 'applicant@gmail.com',
                password: '12345678' }
