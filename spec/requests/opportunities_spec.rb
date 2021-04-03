@@ -275,7 +275,7 @@ describe 'opportunities' do
       expect(opportunity.applicants.count).to eq(0)
       expect(applicant.opportunities.count).to eq(0)
       expect(response_json)
-        .to include('applicant must have profile before apply to an oportunity')
+        .to include('Applicant must have profile before apply to an oportunity')
     end
   end
 end

@@ -30,9 +30,8 @@ class V1::OpportunitiesController < ApplicationController
 
   def missing_profile
     render json: {
-      errors: ['Applicant must have profile before apply to an oportunity'] 
+      errors: ['Applicant must have profile before apply to an oportunity']
     }, status: :unprocessable_entity
-
   end
 
   def set_opportunity
